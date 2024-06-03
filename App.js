@@ -17,7 +17,7 @@ export default function App() {
   const [taskItems, setTaskItems] = useState([]);
 
   const handleAddTask = () => {
-    Keyboard.dismiss(); // Dismisses the keyboard
+    Keyboard.dismiss(); 
     setTaskItems([...taskItems, { text: task, complated: false }]);
     setTask(null);
   };
@@ -25,13 +25,6 @@ export default function App() {
   const completeTask = (index) => {
     const itemsCopy = [...taskItems];
     itemsCopy[index].complated = !itemsCopy[index].complated;
-    if (itemsCopy[index].complated) {
-      itemsCopy.push(itemsCopy[index]);
-      itemsCopy.splice(index, 1);
-    } else {
-      itemsCopy.unshift(itemsCopy[index]);
-      itemsCopy.splice(index + 1, 1);
-    }
     setTaskItems(itemsCopy);
   };
 
@@ -52,7 +45,7 @@ export default function App() {
       </View>
       <View style={styles.tasksWrapper}>
         <View style={styles.items}>
-          {/* {This is where the tasks will go} */}
+     
           {taskItems.map((item, index) => (
             <TouchableOpacity key={index} onPress={() => completeTask(index)}>
               <Task key={index} text={item.text} complated={item.complated} onPress={() => completeTask(index)} deleteTask={() => deleteTask(index)}/>
@@ -61,7 +54,7 @@ export default function App() {
         </View>
       </View>
 
-      {/* {Write to Task} */}
+
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "height"}

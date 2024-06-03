@@ -3,9 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { MaterialIcons } from '@expo/vector-icons';
 
-
 const Task = (props) => {
-  const [isChecked, setChecked] = useState(props.complated);
+  const [isChecked, setChecked] = useState(props.completed);
 
   const handlePress = () => {
     setChecked(!isChecked);
@@ -13,32 +12,19 @@ const Task = (props) => {
   };
 
   return (
-    <View>
-      {props.complated ? (
-        <View style={styles.itemComplated}>
-          <View style={styles.itemLeft}>
-            <TouchableOpacity onPress={handlePress}><Checkbox style={styles.checkbox} value={isChecked} onValueChange={handlePress} /></TouchableOpacity>
-            {props.complated ? (
-              <Text style={styles.itemRightComplated}>{props.text}</Text>
-            ) : (
-              <Text style={styles.itemRight}>{props.text}</Text>
-            )}
-          </View>
-          <MaterialIcons name="delete" size={20} color="grey" onPress={props.deleteTask}/>
-        </View>
-      ) : (
-        <View style={styles.item}>
-          <View style={styles.itemLeft}>
-            <TouchableOpacity onPress={handlePress}><Checkbox style={styles.checkbox} value={isChecked} onValueChange={handlePress} /></TouchableOpacity>
-            {props.complated ? (
-              <Text style={styles.itemRightComplated}>{props.text}</Text>
-            ) : (
-              <Text style={styles.itemRight}>{props.text}</Text>
-            )}
-          </View>
-          <MaterialIcons name="delete" size={20} color="grey" onPress={props.deleteTask}/>
-        </View>
-      )}
+    <View style={isChecked ? styles.itemCompleted : styles.item}>
+      <View style={styles.itemLeft}>
+        <TouchableOpacity>
+          <Checkbox style={styles.checkbox} value={isChecked} onValueChange={handlePress}/>
+        </TouchableOpacity>
+        <Text 
+          style={isChecked ? styles.itemRightCompleted : styles.itemRight} 
+          onPress={handlePress}
+        > 
+          {props.text}
+        </Text>
+      </View>
+      <MaterialIcons name="delete" size={20} color="grey" onPress={props.deleteTask}/>
     </View>
   );
 };
@@ -53,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
   },
-  itemComplated: {
+  itemCompleted: {
     backgroundColor: "#CAF4FF",
     padding: 15,
     borderRadius: 10,
@@ -74,13 +60,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 15,
   },
-  text: {
-    maxWidth: "80%",
-  },
   itemRight: {
     maxWidth: "80%",
   },
-  itemRightComplated: {
+  itemRightCompleted: {
     maxWidth: "80%",
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
