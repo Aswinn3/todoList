@@ -18,13 +18,13 @@ export default function App() {
 
   const handleAddTask = () => {
     Keyboard.dismiss(); 
-    setTaskItems([...taskItems, { text: task, complated: false }]);
+    setTaskItems([...taskItems, { text: task, completed: false }]);
     setTask(null);
   };
 
   const completeTask = (index) => {
     const itemsCopy = [...taskItems];
-    itemsCopy[index].complated = !itemsCopy[index].complated;
+    itemsCopy[index].completed = !itemsCopy[index].completed;
     setTaskItems(itemsCopy);
   };
 
@@ -48,7 +48,7 @@ export default function App() {
      
           {taskItems.map((item, index) => (
             <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-              <Task key={index} text={item.text} complated={item.complated} onPress={() => completeTask(index)} deleteTask={() => deleteTask(index)}/>
+              <Task key={index} text={item.text} complated={item.completed} onPress={() => completeTask(index)} deleteTask={() => deleteTask(index)}/>
             </TouchableOpacity>
           ))}
         </View>
