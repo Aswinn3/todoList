@@ -1,30 +1,23 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const Task = (props) => {
-  const [isChecked, setChecked] = useState(props.completed);
+const Task = ({ text, completed, onPress, deleteTask }) => {
+  const [isChecked, setChecked] = useState(completed);
 
   const handlePress = () => {
     setChecked(!isChecked);
-    props.onPress();
+    onPress();
   };
 
   return (
     <View style={isChecked ? styles.itemCompleted : styles.item}>
       <View style={styles.itemLeft}>
-        <TouchableOpacity>
-          <Checkbox style={styles.checkbox} value={isChecked} onValueChange={handlePress}/>
-        </TouchableOpacity>
-        <Text 
-          style={isChecked ? styles.itemRightCompleted : styles.itemRight} 
-          onPress={handlePress}
-        > 
-          {props.text}
-        </Text>
+        <Checkbox style={styles.checkbox} value={isChecked} onValueChange={handlePress}/>
+        <Text style={isChecked ? styles.itemTextCompleted : styles.itemText}>{text}</Text>
       </View>
-      <MaterialIcons name="delete" size={20} color="grey" onPress={props.deleteTask}/>
+      <MaterialIcons name="delete" size={24} color="grey" onPress={deleteTask} />
     </View>
   );
 };
@@ -51,23 +44,17 @@ const styles = StyleSheet.create({
   itemLeft: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    backgroundColor: "#ffffff",
-    borderRadius: 5,
     marginRight: 15,
+    backgroundColor: "#FEFFDF",
   },
-  itemRight: {
+  itemText: {
     maxWidth: "80%",
   },
-  itemRightCompleted: {
+  itemTextCompleted: {
     maxWidth: "80%",
     textDecorationLine: "line-through",
-    textDecorationStyle: "solid",
-    textDecorationColor: "#000",
   },
 });
 
