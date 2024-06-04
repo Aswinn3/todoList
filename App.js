@@ -1,25 +1,46 @@
-import React, { useState } from "react";
-import { Platform } from 'react-native';
-import {
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { Platform, Image, Keyboard, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Task from "./components/Task";
 
 export default function App() {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState("");
   const [taskItems, setTaskItems] = useState([]);
 
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  useEffect(() => {
+    saveTasks(taskItems);
+  }, [taskItems]);
+
+  const saveTasks = async (tasks) => {
+    try {
+      const jsonTasks = JSON.stringify(tasks);
+      await AsyncStorage.setItem('tasks', jsonTasks);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const loadTasks = async () => {
+    try {
+      const jsonTasks = await AsyncStorage.getItem('tasks');
+      if (jsonTasks != null) {
+        setTaskItems(JSON.parse(jsonTasks));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleAddTask = () => {
-    Keyboard.dismiss(); 
-    setTaskItems([...taskItems, { text: task, completed: false }]);
-    setTask(null);
+    if (task.trim()) {
+      setTaskItems([...taskItems, { text: task, completed: false }]);
+      setTask("");
+      Keyboard.dismiss();
+    }
   };
 
   const completeTask = (index) => {
@@ -37,36 +58,30 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("./assets/navIcon.png")}
-          style={{ width: 50, height: 50 }}
-        />
+        <Image source={require("./assets/navIcon.png")} style={styles.headerIcon} />
         <Text style={styles.sectionTitle}>Task Manager</Text>
       </View>
-      <View style={styles.tasksWrapper}>
+      <ScrollView style={styles.tasksWrapper}>
         <View style={styles.items}>
-     
           {taskItems.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-              <Task key={index} text={item.text} complated={item.completed} onPress={() => completeTask(index)} deleteTask={() => deleteTask(index)}/>
-            </TouchableOpacity>
+            <Task
+              key={index}
+              text={item.text}
+              completed={item.completed}
+              onPress={() => completeTask(index)}
+              deleteTask={() => deleteTask(index)}
+            />
           ))}
         </View>
-      </View>
-
-
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "android" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-      >
+      </ScrollView>
+      <KeyboardAvoidingView behavior={Platform.OS === "android" ? "padding" : "height"} style={styles.writeTaskWrapper}>
         <TextInput
           style={styles.input}
-          placeholder={"Write a task"}
+          placeholder="Write a task"
           value={task}
-          onChangeText={(text) => setTask(text)}
+          onChangeText={setTask}
         />
-        <TouchableOpacity onPress={() => handleAddTask()}>
+        <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+</Text>
           </View>
@@ -82,22 +97,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF7FF",
     paddingTop: 50,
   },
-  tasksWrapper: {
-    paddingHorizontal: 20,
-  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#5AB2FF",
-    width: "100% ",
+    width: "100%",
     height: 80,
     justifyContent: "center",
     paddingRight: 100,
+  },
+  headerIcon: {
+    width: 50,
+    height: 50,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginLeft: 15,
+  },
+  tasksWrapper: {
+    paddingHorizontal: 20,
   },
   items: {
     marginTop: 30,
